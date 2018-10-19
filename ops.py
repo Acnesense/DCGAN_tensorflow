@@ -8,7 +8,7 @@ def conv2d_transpose(input, output_shape, name ,k_h=5, k_w=5):
     with tf.variable_scope(name):
 
         W = tf.Variable(tf.random_normal(shape=filter_shape, stddev=5e-2))
-        output = tf.nn.conv2d_transpose(input, W, output_shape = output_shape, strides=[1,k_h,k_w,1])
+        output = tf.nn.conv2d_transpose(input, W, output_shape = output_shape, strides=[1,2,2,1])
 
     return output
 
