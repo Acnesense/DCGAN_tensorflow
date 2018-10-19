@@ -8,6 +8,10 @@ g_length = [4, 8, 16, 32, 64]
 d_depth = [64, 128, 256, 512, 512]
 d_length = []
 
+img_width = 28
+img_height = 28
+
+
 nosie_dim = 100
 batch_size = 100
 learning_rate = 0.03
@@ -91,7 +95,7 @@ def train():
     # placeholder
     
     gen_input = tf.placeholder(tf.float32, [None, nosie_dim])
-    disc_input = tf.placeholder(tf.float32, [None, 64, 64, 3])
+    disc_input = tf.placeholder(tf.float32, [None, img_width, img_height, 1])
 
     gen_output = generator(gen_input)
 
