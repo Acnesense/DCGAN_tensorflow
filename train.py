@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.examples.tutorials.mnist import input_data
 from ops import *
-
+   
 g_depth = [512, 256, 128, 64, 3]
 g_length = [4, 8, 16, 32, 64]
 d_depth = [64, 128, 256, 512, 512]
@@ -27,21 +27,21 @@ def generator(Z):
     g_h1 = conv2d_transpose(input=g_h0,
                             output_shape=[batch_size, g_length[1], g_length[1], g_depth[1]], 
                             name='gen_var')
-    print(g_h1.get_shape().as_list())
+#    print(g_h1.get_shape().as_list())
 
     g_h2 = conv2d_transpose(input=g_h1,
                             output_shape=[batch_size, g_length[2], g_length[2], g_depth[2]], 
                             name='gen_var')
     g_h2 = batch_normalization_and_relu(g_h2, "gen")
     
-    print(g_h2.get_shape().as_list())
+#    print(g_h2.get_shape().as_list())
 
     g_h3 = conv2d_transpose(input=g_h2,
                             output_shape=[batch_size, g_length[3], g_length[3], g_depth[3]], 
                             name='gen_var')
     g_h3 = batch_normalization_and_relu(g_h3, "gen")
     
-    print(g_h3.get_shape().as_list())
+#    print(g_h3.get_shape().as_list())
 
 
     g_h4 = conv2d_transpose(input=g_h3,
@@ -60,21 +60,21 @@ def discriminator(x):
                   output_depth=d_depth[0],
                   name='disc_vars')
 
-#    print(d_h0.get_shape().as_list())
+    print(d_h0.get_shape().as_list())
 
     d_h1 = conv2d(input=d_h0,
                   output_depth=d_depth[1],
                   name='disc_vars')
     d_h1 = batch_normalization_and_relu(d_h1, "disc")
 
-#    print(d_h1.get_shape().as_list())
+    print(d_h1.get_shape().as_list())
 
     d_h2 = conv2d(input=d_h1,
                   output_depth=d_depth[2],
                   name='disc_vars')
     d_h2 = batch_normalization_and_relu(d_h2, "disc")
 
-#    print(d_h2.get_shape().as_list())
+    print(d_h2.get_shape().as_list())
 
     d_h3 = conv2d(input=d_h2,
                   output_depth=d_depth[3],
@@ -83,7 +83,7 @@ def discriminator(x):
     d_h3_shape = d_h3.get_shape().as_list()
     d_h3 = tf.reshape(d_h3, [batch_size, d_h3_shape[1]*d_h3_shape[2]*d_h3_shape[3]])
 
-#    print(d_h3.get_shape().as_list())
+    print(d_h3.get_shape().as_list())
 
     output = mat_operation(d_h3, 1, name='disc_vars')
     output = tf.nn.sigmoid(output)
@@ -99,6 +99,7 @@ def train():
 
     gen_output = generator(gen_input)
 
+    print(gen_output.get_shape().as_list())
     fake_output = discriminator(gen_output)
     real_output = discriminator(disc_input)
 
