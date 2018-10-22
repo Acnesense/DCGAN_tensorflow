@@ -1,5 +1,5 @@
 import numpy as np
-import cPickle
+#import cPickle
 import os
 
 from scipy.misc import imsave
@@ -9,8 +9,13 @@ def img_save(images, path):
     imsave(path, image)
 
 def load_mnist():
-    
-    return 0
+    data_dir = 'mnist'
+    fd = open(os.path.join(data_dir,'train-images-idx3-ubyte'))
+    loaded = np.fromfile(file=fd,dtype=np.uint8)
+    data = loaded[16:].reshape((60000,28,28,1)).astype(np.float)
+    data = add_zero_padding(data)
+
+    return data
 
 def load_cifar():
     dir_path = 'cifar-10'
@@ -29,21 +34,7 @@ def load_cifar():
 
     return(np.array(data))
 
-def mnist():
-    
-    return 0
-"""
-def img_save(images):
-    fig = plt.figure()
-    fig = plt.figure(figsize=(8,8))
-    gs = gridspec.GridSpec(8,8)
-    gs.update(wspace=0.05, hspace=0.05)
-
-    for i, image in enumerate(images):
-        ax = plt.subplot(gs[i])
-        plt.axis('off')
-        
-        plt.imshow(image.reshape(32,32,3))
-    return fig
-"""
-
+def add_zero_padding(data):
+    padding = np.zeros((60000, 32, 32, 1))
+    padding[:,:28,:28,:] = data
+    return padding

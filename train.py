@@ -21,6 +21,9 @@ class Model(object):
 
         if(data_name == 'cifar-10'):
             self.data = load_cifar()
+
+        elif(data_name == 'mnist'):
+            self.data = load_mnist()
             
             print("image is loaded")
 
@@ -170,3 +173,8 @@ class Model(object):
                 num_img += 1
                 plt.close(fig)
     """
+
+if __name__ == "__main__":
+    print(sys.argv[1])
+    model = Model(sys.argv[1])
+    print(np.shape(model.data))
