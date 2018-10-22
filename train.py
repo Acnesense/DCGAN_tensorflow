@@ -30,10 +30,9 @@ class Model(object):
         self.img_width = 32
         self.img_heigth = 32
 
-        self.g_depth = [512, 256, 128, 64, 3]
-        self.g_length = [2, 4, 8, 16, 32]
-        self.d_depth = [64, 128, 256, 512, 512]
-
+        self.g_depth = [1024, 512, 256, 128, 3]
+        self.g_length = [4, 8, 16, 32, 64]
+        self.d_depth = [64, 128, 256, 512, 1024]
 
 
         self.rgb = True
@@ -51,35 +50,37 @@ class Model(object):
         #mnist = input_data.read_data_sets("data/", one_hot=True)
 
     def generator(self, Z):
-    #    print(Z.get_shape().as_list())
+
+        print(Z.get_shape().as_list())
         g_h0 = mat_operation(Z, self.g_length[0]*self.g_length[0]*self.g_depth[0], 'gen_vars')
         g_h0 = tf.reshape(g_h0, [-1,self.g_length[0],self.g_length[0], self.g_depth[0]])
 
-    #    print(g_h0.get_shape().as_list())
+        print(123)
+        print(g_h0.get_shape().as_list())
         g_h1 = conv2d_transpose(input=g_h0,
                                 output_shape=[self.batch_size, self.g_length[1], self.g_length[1], self.g_depth[1]], 
                                 name='gen_var')
-    #    print(g_h1.get_shape().as_list())
+        print(g_h1.get_shape().as_list())
 
         g_h2 = conv2d_transpose(input=g_h1,
                                 output_shape=[self.batch_size, self.g_length[2], self.g_length[2], self.g_depth[2]], 
                                 name='gen_var')
         g_h2 = batch_normalization_and_relu(g_h2, "gen")
         
-    #    print(g_h2.get_shape().as_list())
+        print(g_h2.get_shape().as_list())
 
         g_h3 = conv2d_transpose(input=g_h2,
                                 output_shape=[self.batch_size, self.g_length[3], self.g_length[3], self.g_depth[3]], 
                                 name='gen_var')
         g_h3 = batch_normalization_and_relu(g_h3, "gen")
         
-    #    print(g_h3.get_shape().as_list())
+        print(g_h3.get_shape().as_list())
 
         g_h4 = conv2d_transpose(input=g_h3,
                                 output_shape=[self.batch_size, self.g_length[4], self.g_length[4], self.g_depth[4]], 
                                 name='gen_var')
         g_h4 = tf.nn.tanh(g_h4)
-    #    print(g_h4.get_shape().as_list())
+        print(g_h4.get_shape().as_list())
         
         return g_h4
 
