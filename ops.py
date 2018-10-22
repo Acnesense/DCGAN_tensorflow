@@ -57,7 +57,7 @@ def sigmoid_cross_entropy_with_logits(x, y):
         return tf.nn.sigmoid_cross_entropy_with_logits(labels=x, target=y)
 
 
-def leaky_relu(input, leak=0.2, ):
+def leaky_relu(input, leak=0.2 ):
     return tf.maximum(input, leak*input)
 
 
