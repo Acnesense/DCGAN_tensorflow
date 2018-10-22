@@ -47,7 +47,7 @@ data_length = len(data)
 
 noise_dim = 100
 batch_size = 200
-learning_rate = 0.0002
+learning_rate = 0.00005
 epoch = 100
 
 #mnist = input_data.read_data_sets("data/", one_hot=True)
@@ -159,8 +159,8 @@ def train():
         sess.run(tf.global_variables_initializer())
         print("train start!")
         for i in range(epoch):
-            for j in range(1):
-           # for j in range(int(data_length/batch_size)):
+           # for j in range(1):
+            for j in range(int(data_length/batch_size)):
                 batch_data = data[j*batch_size:(j+1)*batch_size]
                 d_loss, _ = sess.run([disc_loss, disc_train_step], feed_dict={disc_input:batch_data, gen_input:np.random.uniform(-1., 1., [batch_size, noise_dim])})
                 g_loss, _ = sess.run([gen_loss, gen_train_step], feed_dict={gen_input: np.random.uniform(-1., 1., [batch_size, noise_dim])})
@@ -168,9 +168,10 @@ def train():
             print("epoch : ", i, "discriminator_loss :", d_loss, "generator_loss", g_loss)
 
             images = sess.run(gen_output, feed_dict={gen_input : np.random.uniform(-1., 1., [batch_size, noise_dim])})
-            images = tf.summary.image("G", images)
+#            images = tf.summary.image("G", images)
             path = 'generated_image/%s.png' % str(num_img)
             img_save(images, path)
+            num_img += 1
 
 """            
             print(images)
