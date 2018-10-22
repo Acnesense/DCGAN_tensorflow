@@ -40,7 +40,7 @@ if rgb is True:
 
 data_length = len(data)
 
-nosie_dim = 100
+noise_dim = 100
 batch_size = 200
 learning_rate = 0.0002
 epoch = 100
@@ -128,7 +128,7 @@ def discriminator(x):
 def train():
     # placeholder
     
-    gen_input = tf.placeholder(tf.float32, [None, nosie_dim])
+    gen_input = tf.placeholder(tf.float32, [None, noise_dim])
     disc_input = tf.placeholder(tf.float32, [None, img_width, img_height, color])
 
     gen_output = generator(gen_input)
