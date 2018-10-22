@@ -21,25 +21,25 @@ class Model(object):
 
         if(data_name == 'cifar-10'):
             self.data = load_cifar()
+            self.rgb = True
 
         elif(data_name == 'mnist'):
             self.data = load_mnist()
-            
+            self.rgb = False           
             print("image is loaded")
 
         self.img_width = 32
         self.img_heigth = 32
 
-        self.g_depth = [512, 256, 128, 64, 3]
+        if self.rgb is True:
+            self.color = 3
+        else:
+            self.color = 1
+
+        self.g_depth = [512, 256, 128, 64, 1]
         self.g_length = [2, 4, 8, 16, 32]
         self.d_depth = [64, 128, 256, 512, 512]
 
-
-
-        self.rgb = True
-
-        if self.rgb is True:
-            self.color = 3
 
         self.data_length = len(self.data)
 
@@ -117,13 +117,12 @@ class Model(object):
         d_h3_shape = d_h3.get_shape().as_list()
         d_h3 = tf.reshape(d_h3, [self.batch_size, d_h3_shape[1]*d_h3_shape[2]*d_h3_shape[3]])
 
-        print(d_h3.get_shape().as_list())
+    #    print(d_h3.get_shape().as_list())
 
         output = mat_operation(d_h3, 1, name='disc_vars')
         output = tf.nn.sigmoid(output)
 
         return output
-
 
     def train(self):
         # placeholder
@@ -137,10 +136,8 @@ class Model(object):
         fake_output = self.discriminator(gen_output)
         real_output = self.discriminator(disc_input)
 
-
         disc_loss = -tf.reduce_mean(tf.log(real_output) + tf.log(1. - fake_output))
         gen_loss = -tf.reduce_mean(tf.log(fake_output))
-
 
         tvar = tf.trainable_variables()
         gvar = [var for var in tvar if 'gen' in var.name]
@@ -154,8 +151,8 @@ class Model(object):
             sess.run(tf.global_variables_initializer())
             print("train start!")
             for i in range(self.epoch):
-                for j in range(1):
-            # for j in range(int(self.data_length/self.batch_size)):
+               # for j in range(1):
+                for j in range(int(self.data_length/self.batch_size)):
                     batch_data = self.data[j*self.batch_size:(j+1)*self.batch_size]
                     d_loss, _ = sess.run([disc_loss, disc_train_step], feed_dict={disc_input:batch_data, gen_input:np.random.uniform(-1., 1., [self.batch_size, self.nosie_dim])})
                     g_loss, _ = sess.run([gen_loss, gen_train_step], feed_dict={gen_input: np.random.uniform(-1., 1., [self.batch_size, self.nosie_dim])})
@@ -164,7 +161,7 @@ class Model(object):
                 images = sess.run(gen_output, feed_dict={gen_input : np.random.uniform(-1., 1., [self.batch_size, self.nosie_dim])})
                 images = tf.summary.image("G", images)
                 path = 'generated_image/%s.png' % str(num_img)
-                img_save(images, path)
+#                img_save(images, path)
 
     """            
                 print(images)

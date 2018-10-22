@@ -1,5 +1,5 @@
 import numpy as np
-#import cPickle
+import cPickle
 import os
 
 from scipy.misc import imsave
