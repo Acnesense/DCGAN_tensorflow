@@ -1,11 +1,29 @@
 import tensorflow as tf
 import numpy as np
+import os
+import sys
+import cPickle
 from ops import *
 
-from tensorflow.examples.tutorials.mnist import input_data
-from keras.datasets import cifar10
+print("image loading start")
 
-(data, _), (_, _) = cifar10.load_data()
+dir_path = "cifar-10"
+data = []
+
+for i in range(1,6):
+    file_name = "data_batch_" + str(i)
+    file_path = os.path.join(dir_path, file_name)
+    with open(file_path, 'rb') as file:
+        image_dict = cPickle.load(file)
+
+    image = image_dict["data"]
+    for img in image:
+        img = img.reshape(32,32,3)
+        data.append(img)
+
+data = np.array(data)
+print(np.shape(data))
+print("image is loaded")
 
 img_width = 32
 img_height = 32
@@ -24,7 +42,7 @@ data_length = len(data)
 
 nosie_dim = 100
 batch_size = 200
-learning_rate = 0.03
+learning_rate = 0.0002
 epoch = 100
 
 #mnist = input_data.read_data_sets("data/", one_hot=True)
@@ -99,7 +117,7 @@ def discriminator(x):
     d_h3_shape = d_h3.get_shape().as_list()
     d_h3 = tf.reshape(d_h3, [batch_size, d_h3_shape[1]*d_h3_shape[2]*d_h3_shape[3]])
 
-#    print(d_h3.get_shape().as_list())
+    print(d_h3.get_shape().as_list())
 
     output = mat_operation(d_h3, 1, name='disc_vars')
     output = tf.nn.sigmoid(output)
@@ -134,7 +152,7 @@ def train():
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-
+        print("train start!")
         for i in range(epoch):
             for j in range(int(data_length/batch_size)):
                 batch_data = data[j*batch_size:(j+1)*batch_size]
