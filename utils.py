@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import numpy as np
+import cPickle
+import os
 
 from scipy.misc import imsave
 
@@ -8,6 +8,30 @@ def img_save(images, path):
     image = images[0]
     imsave(path, image)
 
+def load_mnist():
+    
+    return 0
+
+def load_cifar():
+    dir_path = 'cifar-10'
+    data = []
+
+    for i in range(1,6):
+        file_name = "data_batch_" + str(i)
+        file_path = os.path.join(dir_path, file_name)
+        with open(file_path, 'rb') as file:
+            image_dict = cPickle.load(file)
+
+        image = image_dict["data"]
+        for img in image:
+            img = img.reshape(32,32,3)
+            data.append(img)
+
+    return(np.array(data))
+
+def mnist():
+    
+    return 0
 """
 def img_save(images):
     fig = plt.figure()
