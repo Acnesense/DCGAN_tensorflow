@@ -130,6 +130,7 @@ def train():
 
     gen_train_step = tf.train.AdamOptimizer(learning_rate).minimize(gen_loss, var_list=gvar)
     disc_train_step = tf.train.AdamOptimizer(learning_rate).minimize(disc_loss, var_list=dvar)
+    num_img = 0
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
@@ -142,6 +143,12 @@ def train():
 
             print("epoch : ", i, "discriminator_loss :", d_loss, "generator_loss", g_loss)
 
-            
+            images = sess.run(gen_output, feed_dict={gen_input : np.random.uniform(-1., 1., [64, noise_dim])})
+            fig = plot(images)
+            plt.savefig('generated_image/%s.png' % str(num_img).zfill(3), bbox_inches='tight')
+            num_img += 1
+            plt.close(fig)
+
+
 if __name__ == "__main__":
     train()
