@@ -4,11 +4,16 @@ import os
 import sys
 import cPickle
 from ops import *
+from utils import *
 
 print("image loading start")
 
 dir_path = "cifar-10"
 data = []
+
+if os.environ.get('DISPLAY', '')== '':
+    plt.switch_backend('agg')
+
 
 for i in range(1,6):
     file_name = "data_batch_" + str(i)
@@ -80,7 +85,7 @@ def generator(Z):
                             name='gen_var')
     g_h4 = tf.nn.tanh(g_h4)
 #    print(g_h4.get_shape().as_list())
-
+    
     return g_h4
 
 
@@ -154,19 +159,26 @@ def train():
         sess.run(tf.global_variables_initializer())
         print("train start!")
         for i in range(epoch):
-            for j in range(int(data_length/batch_size)):
+            for j in range(1):
+           # for j in range(int(data_length/batch_size)):
                 batch_data = data[j*batch_size:(j+1)*batch_size]
-                d_loss, _ = sess.run([disc_loss, disc_train_step], feed_dict={disc_input:batch_data, gen_input:np.random.uniform(-1., 1., [200, 100])})
-                g_loss, _ = sess.run([gen_loss, gen_train_step], feed_dict={gen_input: np.random.uniform(-1., 1., [200, 100])})
+                d_loss, _ = sess.run([disc_loss, disc_train_step], feed_dict={disc_input:batch_data, gen_input:np.random.uniform(-1., 1., [batch_size, noise_dim])})
+                g_loss, _ = sess.run([gen_loss, gen_train_step], feed_dict={gen_input: np.random.uniform(-1., 1., [batch_size, noise_dim])})
 
             print("epoch : ", i, "discriminator_loss :", d_loss, "generator_loss", g_loss)
 
-            images = sess.run(gen_output, feed_dict={gen_input : np.random.uniform(-1., 1., [64, noise_dim])})
+            images = sess.run(gen_output, feed_dict={gen_input : np.random.uniform(-1., 1., [batch_size, noise_dim])})
+            images = tf.summary.image("G", images)
+            path = 'generated_image/%s.png' % str(num_img)
+            img_save(images, path)
+
+"""            
+            print(images)
             fig = plot(images)
             plt.savefig('generated_image/%s.png' % str(num_img).zfill(3), bbox_inches='tight')
             num_img += 1
             plt.close(fig)
-
+"""
 
 if __name__ == "__main__":
     train()
