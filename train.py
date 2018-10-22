@@ -19,7 +19,7 @@ class Model(object):
 
         self.data_name = data_name
 
-        if(data_name != 'cifar-10'):
+        if(data_name == 'cifar-10'):
             self.data = load_cifar()
             
             print("image is loaded")
