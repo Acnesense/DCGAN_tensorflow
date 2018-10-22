@@ -106,3 +106,6 @@ venv.bak/
 data/
 .DS_Store
 *.pyc
+.vimrc
+.vscode/
+.train.py.swp

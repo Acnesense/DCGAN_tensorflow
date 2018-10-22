@@ -21,24 +21,26 @@ class Model(object):
 
         if(data_name == 'cifar-10'):
             self.data = load_cifar()
+            self.rgb = True
 
         elif(data_name == 'mnist'):
             self.data = load_mnist()
-            
+            self.rgb = False           
             print("image is loaded")
 
-        self.img_width = 32
-        self.img_heigth = 32
+        self.img_width = 64
+        self.img_heigth = 64
 
-        self.g_depth = [1024, 512, 256, 128, 3]
+        if self.rgb is True:
+            self.color = 3
+        else:
+            self.color = 1
+
+        self.g_depth = [1024, 512, 256, 128, self.color]
         self.g_length = [4, 8, 16, 32, 64]
         self.d_depth = [64, 128, 256, 512, 1024]
 
 
-        self.rgb = True
-
-        if self.rgb is True:
-            self.color = 3
 
         self.data_length = len(self.data)
 
@@ -51,36 +53,35 @@ class Model(object):
 
     def generator(self, Z):
 
-        print(Z.get_shape().as_list())
+#        print(Z.get_shape().as_list())
         g_h0 = mat_operation(Z, self.g_length[0]*self.g_length[0]*self.g_depth[0], 'gen_vars')
         g_h0 = tf.reshape(g_h0, [-1,self.g_length[0],self.g_length[0], self.g_depth[0]])
 
-        print(123)
-        print(g_h0.get_shape().as_list())
+#        print(g_h0.get_shape().as_list())
         g_h1 = conv2d_transpose(input=g_h0,
                                 output_shape=[self.batch_size, self.g_length[1], self.g_length[1], self.g_depth[1]], 
                                 name='gen_var')
-        print(g_h1.get_shape().as_list())
+#        print(g_h1.get_shape().as_list())
 
         g_h2 = conv2d_transpose(input=g_h1,
                                 output_shape=[self.batch_size, self.g_length[2], self.g_length[2], self.g_depth[2]], 
                                 name='gen_var')
         g_h2 = batch_normalization_and_relu(g_h2, "gen")
         
-        print(g_h2.get_shape().as_list())
+#        print(g_h2.get_shape().as_list())
 
         g_h3 = conv2d_transpose(input=g_h2,
                                 output_shape=[self.batch_size, self.g_length[3], self.g_length[3], self.g_depth[3]], 
                                 name='gen_var')
         g_h3 = batch_normalization_and_relu(g_h3, "gen")
         
-        print(g_h3.get_shape().as_list())
+#        print(g_h3.get_shape().as_list())
 
         g_h4 = conv2d_transpose(input=g_h3,
                                 output_shape=[self.batch_size, self.g_length[4], self.g_length[4], self.g_depth[4]], 
                                 name='gen_var')
         g_h4 = tf.nn.tanh(g_h4)
-        print(g_h4.get_shape().as_list())
+#        print(g_h4.get_shape().as_list())
         
         return g_h4
 
@@ -118,13 +119,12 @@ class Model(object):
         d_h3_shape = d_h3.get_shape().as_list()
         d_h3 = tf.reshape(d_h3, [self.batch_size, d_h3_shape[1]*d_h3_shape[2]*d_h3_shape[3]])
 
-        print(d_h3.get_shape().as_list())
+    #    print(d_h3.get_shape().as_list())
 
         output = mat_operation(d_h3, 1, name='disc_vars')
         output = tf.nn.sigmoid(output)
 
         return output
-
 
     def train(self):
         # placeholder
@@ -138,10 +138,8 @@ class Model(object):
         fake_output = self.discriminator(gen_output)
         real_output = self.discriminator(disc_input)
 
-
         disc_loss = -tf.reduce_mean(tf.log(real_output) + tf.log(1. - fake_output))
         gen_loss = -tf.reduce_mean(tf.log(fake_output))
-
 
         tvar = tf.trainable_variables()
         gvar = [var for var in tvar if 'gen' in var.name]
@@ -155,8 +153,8 @@ class Model(object):
             sess.run(tf.global_variables_initializer())
             print("train start!")
             for i in range(self.epoch):
-                for j in range(1):
-            # for j in range(int(self.data_length/self.batch_size)):
+               # for j in range(1):
+                for j in range(int(self.data_length/self.batch_size)):
                     batch_data = self.data[j*self.batch_size:(j+1)*self.batch_size]
                     d_loss, _ = sess.run([disc_loss, disc_train_step], feed_dict={disc_input:batch_data, gen_input:np.random.uniform(-1., 1., [self.batch_size, self.nosie_dim])})
                     g_loss, _ = sess.run([gen_loss, gen_train_step], feed_dict={gen_input: np.random.uniform(-1., 1., [self.batch_size, self.nosie_dim])})
@@ -165,7 +163,7 @@ class Model(object):
                 images = sess.run(gen_output, feed_dict={gen_input : np.random.uniform(-1., 1., [self.batch_size, self.nosie_dim])})
                 images = tf.summary.image("G", images)
                 path = 'generated_image/%s.png' % str(num_img)
-                img_save(images, path)
+#                img_save(images, path)
 
     """            
                 print(images)

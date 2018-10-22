@@ -1,6 +1,7 @@
 import numpy as np
 #import cPickle
 import os
+import tensorflow as tf
 
 from scipy.misc import imsave
 
@@ -13,9 +14,14 @@ def load_mnist():
     fd = open(os.path.join(data_dir,'train-images-idx3-ubyte'))
     loaded = np.fromfile(file=fd,dtype=np.uint8)
     data = loaded[16:].reshape((60000,28,28,1)).astype(np.float)
-    data = add_zero_padding(data)
 
-    return data
+    sess = tf.Session()
+
+    train_set = tf.image.resize_images(data, [64, 64]).eval(session=sess)
+    train_set = (train_set - 0.5) / 0.5  # normalization; range: -1 ~ 1
+    print(np.shape(train_set))
+
+    return train_set
 
 def load_cifar():
     dir_path = 'cifar-10'
@@ -38,3 +44,6 @@ def add_zero_padding(data):
     padding = np.zeros((60000, 32, 32, 1))
     padding[:,:28,:28,:] = data
     return padding
+
+if __name__ == "__main__":
+    load_mnist()
