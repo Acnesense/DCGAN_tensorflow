@@ -109,3 +109,4 @@ data/
 .vimrc
 .vscode/
 .train.py.swp
+download.py

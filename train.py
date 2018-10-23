@@ -94,32 +94,32 @@ class Model(object):
                     output_depth=self.d_depth[0],
                     name='disc_vars')
 
-    #    print(d_h0.get_shape().as_list())
+        print(d_h0.get_shape().as_list())
 
         d_h1 = conv2d(input=d_h0,
                     output_depth=self.d_depth[1],
                     name='disc_vars')
         d_h1 = batch_normalization_and_relu(d_h1, "disc")
 
-    #    print(d_h1.get_shape().as_list())
+        print(d_h1.get_shape().as_list())
 
         d_h2 = conv2d(input=d_h1,
                     output_depth=self.d_depth[2],
                     name='disc_vars')
         d_h2 = batch_normalization_and_relu(d_h2, "disc")
 
-    #    print(d_h2.get_shape().as_list())
+        print(d_h2.get_shape().as_list())
 
         d_h3 = conv2d(input=d_h2,
                     output_depth=self.d_depth[3],
                     name='disc_vars')
 
-    #    print(d_h3.get_shape().as_list())
+        print(d_h3.get_shape().as_list())
 
         d_h3_shape = d_h3.get_shape().as_list()
         d_h3 = tf.reshape(d_h3, [self.batch_size, d_h3_shape[1]*d_h3_shape[2]*d_h3_shape[3]])
 
-    #    print(d_h3.get_shape().as_list())
+        print(d_h3.get_shape().as_list())
 
         output = mat_operation(d_h3, 1, name='disc_vars')
         output = tf.nn.sigmoid(output)
