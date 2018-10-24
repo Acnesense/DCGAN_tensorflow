@@ -110,7 +110,6 @@ data/
 .vscode/
 .train.py.swp
 download.py
-generated_image/
 cifar-10/
 mnist/
 MNIST-data/
