@@ -105,3 +105,12 @@ venv.bak/
 
 data/
 .DS_Store
+*.pyc
+.vimrc
+.vscode/
+.train.py.swp
+download.py
+cifar-10/
+mnist/
+MNIST-data/
+checkpoint/
