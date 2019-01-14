@@ -1,11 +1,12 @@
 import tensorflow as tf
 import numpy as np
 from ops import *
+import cPickle
 
-from tensorflow.examples.tutorials.mnist import input_data
-from keras.datasets import cifar10
+#from tensorflow.examples.tutorials.mnist import input_data
 
-(data, _), (_, _) = cifar10.load_data()
+
+
 
 img_width = 32
 img_height = 32
