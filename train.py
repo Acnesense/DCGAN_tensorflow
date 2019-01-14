@@ -103,9 +103,9 @@ class Model(object):
 
             # output layer
             conv5 = tf.layers.conv2d(conv4, self.d_depth[4], [4, 4], strides=(1, 1), padding='valid')
-            o = tf.nn.sigmoid(conv5)
+            output = tf.nn.sigmoid(conv5)
 
-        return o, conv5
+        return output, conv5
 
     def train(self):
         # placeholder
@@ -158,7 +158,6 @@ class Model(object):
 
                 images = sess.run(gen_output, feed_dict={gen_input : Z})
                 path = 'generated_image/%s.png' % str(num_img).zfill(3)
-#                img_save(images, path)
                 fig = plot(images)
                 plt.savefig(path, bbox_inches='tight')
                 num_img += 1
