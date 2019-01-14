@@ -1,4 +1,4 @@
-import tensorflow as tf
+iport tensorflow as tf
 import numpy as np
 import os
 import sys
@@ -59,35 +59,26 @@ class Model(object):
     def generator(self, Z,reuse=False, isTrain=True):
 
         with tf.variable_scope('gen', reuse=reuse):
-#           print(Z.get_shape().as_list())
-#            print(Z.get_shape().as_list())
 
             # 1st hidden layer
             conv1 = tf.layers.conv2d_transpose(Z, self.g_depth[0], [4, 4], strides=(1, 1), padding='valid')
             conv1 = batch_normalization_and_relu(conv1, "gen")
-#            print(conv1.get_shape().as_list())
 
             # 2nd hidden layer
             conv2 = tf.layers.conv2d_transpose(conv1, self.g_depth[1], [4, 4], strides=(2, 2), padding='same')
             conv2 = batch_normalization_and_relu(conv2, "gen")
-#            print(conv2.get_shape().as_list())
 
             # 3rd hidden layer
             conv3 = tf.layers.conv2d_transpose(conv2, self.g_depth[2], [4, 4], strides=(2, 2), padding='same')
             conv3 = batch_normalization_and_relu(conv3, "gen")
-#            print(conv3.get_shape().as_list())
 
             # 4th hidden layer
             conv4 = tf.layers.conv2d_transpose(conv3, self.g_depth[3], [4, 4], strides=(2, 2), padding='same')
             conv4 = batch_normalization_and_relu(conv4, "gen")
-#            print(conv4.get_shape().as_list())
 
             # output layer
             conv5 = tf.layers.conv2d_transpose(conv4, self.g_depth[4], [4, 4], strides=(2, 2), padding='same')
             o = tf.nn.tanh(conv5)
-
-#            print(o.get_shape().as_list())
-
         return o
 
 
@@ -97,31 +88,22 @@ class Model(object):
         # 1st hidden layer
             conv1 = tf.layers.conv2d(x, self.d_depth[0], [4, 4], strides=(2, 2), padding='same')
             conv1 = lrelu(conv1, 0.2)
-#            print(conv1.get_shape().as_list())
 
             # 2nd hidden layer
             conv2 = tf.layers.conv2d(conv1, self.d_depth[1], [4, 4], strides=(2, 2), padding='same')
             conv2 = batch_normalization_and_relu(conv2, "gen")
 
-#            print(conv2.get_shape().as_list())
-
             # 3rd hidden layer
             conv3 = tf.layers.conv2d(conv2, self.d_depth[2], [4, 4], strides=(2, 2), padding='same')
             conv3 = batch_normalization_and_relu(conv3, "gen")
-
-#            print(conv3.get_shape().as_list())
 
             # 4th hidden layer
             conv4 = tf.layers.conv2d(conv3, self.d_depth[3], [4, 4], strides=(2, 2), padding='same')
             conv4 = batch_normalization_and_relu(conv4, "gen")
 
-#            print(conv4.get_shape().as_list())
-
             # output layer
             conv5 = tf.layers.conv2d(conv4, self.d_depth[4], [4, 4], strides=(1, 1), padding='valid')
             o = tf.nn.sigmoid(conv5)
-
-#            print(conv5.get_shape().as_list())
 
         return o, conv5
 
@@ -133,13 +115,9 @@ class Model(object):
         batch_ = tf.placeholder(tf.int32, None)
 
         gen_output = self.generator(gen_input)
-
-    #    print(gen_output.get_shape().as_list())
    
         real_output, real_output_logits = self.discriminator(disc_input)
         fake_output, fake_output_logits = self.discriminator(gen_output,reuse=True)
-
-#        real_shape = real_output.get_shape().as_list()
 
         D_loss_real = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=real_output_logits, labels=tf.ones([batch_, 1, 1, 1])))
         D_loss_fake = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=fake_output_logits, labels=tf.zeros([batch_, 1, 1, 1])))
